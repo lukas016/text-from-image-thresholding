@@ -25,18 +25,18 @@ if(WIN32) #windows icon resource file, provided from /packaging directory
     set(WINDOWS_ICON_RESOURCE "${PROJECT_BINARY_DIR}/exampleApp.icon.rc")
 endif()
 
-add_executable(exampleApp ${SRCS} ${WINDOWS_ICON_RESOURCE})
-target_link_libraries (exampleApp ${CMAKE_THREAD_LIBS_INIT}) #threading
+add_executable(zpo ${SRCS} ${WINDOWS_ICON_RESOURCE})
+target_link_libraries (zpo ${CMAKE_THREAD_LIBS_INIT}) #threading
 if(NOT MSVC)
-    target_compile_options(exampleApp PRIVATE -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic) # extra warnings
+    target_compile_options(zpo PRIVATE -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic) # extra warnings
 endif()
-set_property(TARGET exampleApp PROPERTY CXX_STANDARD 14) # we want C++14
-install(TARGETS exampleApp DESTINATION bin) #copy executable to bin folder on install
+set_property(TARGET zpo PROPERTY CXX_STANDARD 14) # we want C++14
+install(TARGETS zpo DESTINATION bin) #copy executable to bin folder on install
 # convenience target for running the binary
 add_custom_target(exampleApp-run
     WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
-    COMMAND ./exampleApp
-    DEPENDS exampleApp Install_)
+    COMMAND ./zpo
+    DEPENDS zpo Install_)
 
 # short convenience target
 add_custom_target(run DEPENDS exampleApp-run)
@@ -46,8 +46,8 @@ find_program(GDB_PATH gdb)
 if(GDB_PATH)
     add_custom_target(gdb
         WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
-        COMMAND ${GDB_PATH} ./exampleApp
-        DEPENDS exampleApp Install_)
+        COMMAND ${GDB_PATH} ./zpo
+        DEPENDS zpo Install_)
 endif()
 
 # And this would add -DBAR_ENABLE_FEATURE or equivalent to build command
