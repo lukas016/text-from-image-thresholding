@@ -20,8 +20,6 @@ include_directories(
 # source files are listed here
 set(SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
-    SomeClass.cpp
-    SomeClass.h
     main.cpp
     Histogram.cpp
     thresholding/IterativeMethod.cpp

@@ -1,13 +1,56 @@
 #include <iostream>
-#include <stdio.h>
+#include <map>
 #include <string>
+#include <stdexcept>
 #include <vector>
 
-#include "SomeClass.h"
 #include "version.h"
 
 
 using namespace std;
+
+struct arguments {
+    string inputPath;
+    string outputPath;
+    int method;
+    int value;
+
+    arguments() : value(-1)
+    {}
+
+    void print() {
+        cout << "inputPath:  " << inputPath << endl <<
+                "outputPath: " << outputPath << endl <<
+                "method:     " << method << endl <<
+                "value:      " << value << endl;
+    }
+};
+
+enum argsPosition {
+    name = 0,
+    method,
+    inputImage,
+    outputImage,
+};
+
+enum thresholdingOption {
+    otsu = 0,
+    balanced,
+    iterative,
+    manual,
+    all,
+};
+
+enum errorCode {
+    noError = 0,
+    invalidArguments,
+};
+
+map<string, int> thresholdingArgs({{"--otsu", thresholdingOption::otsu},
+        {"--balanced", thresholdingOption::balanced},
+        {"--iterative", thresholdingOption::iterative},
+        {"--manual=", thresholdingOption::manual},
+        {"--all", thresholdingOption::all}});
 
 void printHelp()
 {
@@ -18,91 +61,46 @@ void printHelp()
     /// @todo Do stuff in here also
 }
 
-/**
- * Example UML diagram:
- *
- * \startuml
- *
- * [-> main : start program
- *
- * activate main
- *
- * main -> main : process parameters
- *
- * main -> Version : get version
- *
- * activate Version
- * Version -> Version : loads version
- * Version -> main
- * deactivate Version
- *
- * main -> main : prints version
- *
- * main -> SomeClass : create instance
- * activate SomeClass
- * SomeClass -> BaseClass : call constructor
- * activate BaseClass
- *
- * main -> SomeClass : do stuff
- * activate SomeClass
- * SomeClass -> main : return stuff
- * deactivate SomeClass
- *
- * BaseClass -> SomeClass
- * deactivate BaseClass
- * SomeClass -> main
- * deactivate SomeClass
- *
- * deactivate main
- *
- * \enduml
-*/
+int getMethod(char const* argv[])
+{
+    auto it = thresholdingArgs.find(argv[argsPosition::method]);
+
+    if (it == thresholdingArgs.end())
+        throw invalid_argument("Invalid argument " + string(argv[argsPosition::method]));
+
+    return it->second;
+}
+
+void parseArguments(int argc, char const** argv, arguments & output)
+{
+    const int argsCount = 4;
+    if (argc != argsCount)
+        throw invalid_argument("Invalid count of arguments.\nExpected 4 arguments");
+
+    output.method = getMethod(argv);
+    output.inputPath = argv[argsPosition::inputImage];
+    output.outputPath = argv[argsPosition::outputImage];
+}
+
+
 int main(int argc, char const* argv[])
 {
+    int retCode = errorCode::noError;
+    arguments args;
     // Print help if no arguments are given
-    if (argc == 1)
+
+    try {
+        parseArguments(argc, argv, args);
+    }
+    catch (invalid_argument &e) {
+        cerr << e.what() << endl;
         printHelp();
-
-    // process parameters
-    int argIt;
-    for (argIt = 1; argIt < argc; ++argIt)
-    {
-        string tmp = argv[argIt];
-
-        if (tmp == "--help" || tmp == "-h")
-            printHelp();
-        else if (tmp == "--version")
-            cout << "v" << Version::getVersionShort() << endl;
-        else
-            break;
+        retCode = errorCode::invalidArguments;
     }
-    // process rest of the free arguments. EG. file list, word list
-    for (; argIt < argc; ++argIt)
-        cout << argv[argIt] << endl;
-
-    /// @todo Do more stuff.
-    {
-        BaseClass c;
-        if (argc == 1)
-            c.freePtr();
-        /// @todo fix another leak
+    catch (exception &e) {
+        cerr << e.what() << endl;
+        retCode = errorCode::invalidArguments;
     }
 
-    SomeClass o;
-    o.set(5);
-    cout << o.get() << endl;
-
-    // possible memory leak here, run with `make analyze`
-    int* a = new int(5);
-    cout << *a << endl;
-
-    if (argc == 3)
-        return 1;
-
-
-    delete a;
-    cout << *a << endl;
-
-
-    return 0;
+    return retCode;
 }
