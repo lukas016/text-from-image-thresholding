@@ -1,0 +1,46 @@
+/**
+ * @file:   Base.h
+ * @author: Tom Svoboda <xsvobo0l@stud.fit.vutbr.cz>
+ * @date:   12. 04. 2017
+ */
+
+#ifndef BASE_H
+#define BASE_H
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
+#include <string>
+
+#include "../Histogram.h"
+
+namespace thresholding {
+
+    /**
+     * Common base class for all thresholding algorithm objects
+     */
+    class Algorithm {
+    public:
+        Algorithm(const cv::Mat& _image, const Histogram& _histogram) : image(_image), histogram(_histogram) {};
+        virtual ~Algorithm() {};
+
+        /**
+         * Run algorithm and get result
+         * @param result Reference to matrix where result thresholded image will be written
+         */
+        virtual void run(cv::Mat& result) = 0;
+
+        /**
+         * Return name of algorithm
+         * @return std::string name
+         */
+        inline std::string getName() {return name;};
+
+    protected:
+        const cv::Mat& image;
+        const Histogram& histogram;
+        std::string name;
+    };
+
+}
+
+#endif /* BASE_H */
