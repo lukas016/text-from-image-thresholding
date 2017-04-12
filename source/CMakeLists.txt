@@ -1,3 +1,11 @@
+cmake_minimum_required(VERSION 2.8)
+project( ZPO )
+
+set (PROJECT_VERSION_MAJOR 0)
+set (PROJECT_VERSION_MINOR 1)
+set (PROJECT_VERSION_PATCH 0)
+set (VERSION_TYPE "dev")
+
 # configure version.cpp.in with selected version
 configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in"
@@ -15,9 +23,14 @@ set(SRCS
     SomeClass.cpp
     SomeClass.h
     main.cpp
+    Histogram.cpp
+    thresholding/IterativeMethod.cpp
+    thresholding/OtsuMethod.cpp
+    thresholding/BalancedHistogramMethod.cpp
 )
 
-find_package (Threads REQUIRED) #threading
+find_package (Threads REQUIRED) # threading
+find_package(OpenCV REQUIRED)   # OpenCV
 
 #-------------------------------------------------------------------------------
 #exampleApp executable setup
@@ -27,6 +40,8 @@ endif()
 
 add_executable(zpo ${SRCS} ${WINDOWS_ICON_RESOURCE})
 target_link_libraries (zpo ${CMAKE_THREAD_LIBS_INIT}) #threading
+target_link_libraries (zpo ${OpenCV_LIBS}) # opencv
+
 if(NOT MSVC)
     target_compile_options(zpo PRIVATE -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic) # extra warnings
 endif()
