@@ -12,3 +12,7 @@ Histogram::Histogram(cv::Mat& image) {
 
     // @TODO
 }
+
+unsigned char Histogram::at(int index) const {
+    return histogram.at(index);
+}

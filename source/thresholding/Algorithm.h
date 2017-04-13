@@ -39,6 +39,13 @@ namespace thresholding {
         const cv::Mat& image;
         const Histogram& histogram;
         std::string name;
+
+        /**
+         * Perform standard thresholding with given threshold
+         * @param threshold Value of threshold
+         * @param result Reference to matrix where thresholding result will be stored
+         */
+        void performThresholding(unsigned char threshold, cv::Mat& result);
     };
 
 }

@@ -21,7 +21,7 @@ public:
 
     unsigned char getHighest();
     unsigned char getLowest();
-    unsigned char at(int index);
+    unsigned char at(int index) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Histogram& obj);
 
