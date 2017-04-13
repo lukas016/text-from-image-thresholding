@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "version.h"
+#include "Histogram.h"
 
 
 using namespace std;
@@ -86,11 +87,16 @@ void parseArguments(int argc, char const** argv, arguments & output)
 int main(int argc, char const* argv[])
 {
     int retCode = errorCode::noError;
+    cv::Mat inputImage;
     arguments args;
     // Print help if no arguments are given
 
     try {
         parseArguments(argc, argv, args);
+        inputImage = cv::imread(args.inputPath, CV_LOAD_IMAGE_GRAYSCALE);
+        Histogram histogram(inputImage);
+        cout << histogram << endl;
+
     }
     catch (invalid_argument &e) {
         cerr << e.what() << endl;
