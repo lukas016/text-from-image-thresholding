@@ -8,6 +8,8 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+using color = uint8_t;
+
 /**
  * Histogram class
  */
@@ -19,14 +21,14 @@ public:
      */
     Histogram(cv::Mat& image);
 
-    unsigned char getHighest();
-    unsigned char getLowest();
-    unsigned char at(int index);
+    color getHighest();
+    color getLowest();
+    uint32_t at(color index) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Histogram& obj);
 
 protected:
-    std::vector<unsigned char> histogram;
+    std::vector<uint32_t> histogram;
 };
 
 #endif /* HISTOGRAM_H */
