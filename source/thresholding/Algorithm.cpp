@@ -9,6 +9,8 @@
 namespace thresholding {
 
     void Algorithm::performThresholding(unsigned char threshold, cv::Mat& result) {
+        std::cout << getName() << " threshold:" << std::to_string(threshold) << std::endl;
+        
         for(int row=0; row<image.rows; row++) {
             for(int col=0; col<image.cols; col++) {
                 if(image.at<unsigned char>(row, col) > threshold) {

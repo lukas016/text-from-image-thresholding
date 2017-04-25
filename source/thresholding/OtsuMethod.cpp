@@ -14,61 +14,49 @@ namespace thresholding {
     }
 
     int OtsuMethod::getOtsuThreshold() {
-        float Wb, Wf;
-        float Ub, Uf;
-        float ssb, ssf; // square sigma
-        float sswMin = 255;
+        int pixelsCount = image.rows * image.cols;
+        float uT = 0.0;
+        float w0 = 0;   /** < Weight background */
+        float w1;       /** < Weight foreground */
+        float u0 = 0;   /** < Mean background */
+        float u1 = 0;   /** < Mean foreground */
+        float sum0 = 0; /** < Sum background */
+        float sigma;
+        float max = 0;
         int threshold = 0;
 
-        int n = 256;
+        for(int i=0; i < histogram.levels(); i++) {
+            uT += i * histogram.at(i);
+        }
 
-        for(int t=0; t<n;t++) {
-            Wb = 0;
-            float UbTop = 0, UbBot = 0;
+        for(int i=0; i < histogram.levels(); i++) {
 
-            /* Compute Weight backround, weight foreground, mean background, mean foreground */
-            for(int i=0; i<t;i++) {
-                Wb    += histogram.at(i);
-                UbTop += i*histogram.at(i);
-                UbBot += histogram.at(i);
+            w0 += histogram.at(i);
+            w1 = pixelsCount - w0;
+
+            /* Continue to next step if weight background == 0 */
+            if(w0 == 0) {
+                continue;
             }
 
-            Wb /= image.rows*image.cols;
-            Ub = UbTop/UbBot;
-            Wf = 1-Wb;
-
-            float UfTop = 0, UfBot = 0;
-
-            for(int i=t; i<n; i++) {
-                UfTop += i*histogram.at(i);
-                UfBot += histogram.at(i);
+            /* We can end now, result will be same to end of cycle */
+            if(w1 == 0) {
+                break;
             }
 
-            Uf = UfTop/UfBot;
+            sum0 += i * histogram.at(i);
 
-            /* Compute square sigmas */
-            ssb = 0;
+            /* Get class means */
+            u0 = sum0 / w0;
+            u1 = (uT-sum0) / w1;
 
-            for(int i=0; i<t; i++) {
-                ssb += ((i-Ub)*(i-Ub)) * histogram.at(i);
-            }
+            /* Get sigma */
+            sigma = w0 * w1 * (u0 - u1) * (u0 - u1);
 
-            ssb /= UbBot;
-
-            ssf = 0;
-
-            for(int i=t; i<n; i++) {
-                ssf += ((i-Uf)*(i-Uf)) * histogram.at(i);
-            }
-
-            ssf /= UfBot;
-
-            /* Compute sigma square W and check is is minimum */
-            float ssw = Wb * ssb + Wf * ssf;
-
-            if(ssw < sswMin) {
-                sswMin = ssw;
-                threshold = t;
+            /* Update threshold */
+            if(sigma > max) {
+                max = sigma;
+                threshold = i;
             }
         }
 

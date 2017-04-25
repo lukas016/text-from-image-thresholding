@@ -21,15 +21,15 @@ namespace thresholding {
         int rWeight = histogram.at(rIndex);
 
         while(lIndex < rIndex) {
-            if(rWeight > lIndex) {
-                // Right side is heavier -> push right index to left
-                rIndex--;
-                rWeight += histogram.at(rIndex);
-            }
-            else {
-                // Left side is heavier -> push left index into right
+            if(rWeight > lWeight) {
+                // Right side is heavier -> push left index into right
                 lIndex++;
                 lWeight += histogram.at(lIndex);
+            }
+            else {
+                // Left side is heavier -> push right index to left 
+                rIndex--;
+                rWeight += histogram.at(rIndex);
             }
         }
 

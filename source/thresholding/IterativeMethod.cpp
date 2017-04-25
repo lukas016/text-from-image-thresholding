@@ -10,7 +10,7 @@ namespace thresholding {
 
     IterativeMethod::IterativeMethod(const cv::Mat& _image, const Histogram& _histogram) :
         Algorithm(_image, _histogram) {
-        name = "IterativeMethod";
+        name = "Iterative Method";
     }
 
     int IterativeMethod::getIterativeThreshold() {

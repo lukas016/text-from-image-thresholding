@@ -24,6 +24,12 @@ public:
     color getHighest();
     color getLowest();
     uint32_t at(color index) const;
+    
+    /**
+     * Return number of intensity levels
+     * @return 
+     */
+    int levels() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Histogram& obj);
 
