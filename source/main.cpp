@@ -6,6 +6,9 @@
 
 #include "version.h"
 #include "Histogram.h"
+#include "thresholding/OtsuMethod.h"
+#include "thresholding/BalancedHistogramMethod.h"
+#include "thresholding/IterativeMethod.h"
 
 
 using namespace std;
@@ -83,6 +86,49 @@ void parseArguments(int argc, char const** argv, arguments & output)
     output.outputPath = argv[argsPosition::outputImage];
 }
 
+void performThresholding(cv::Mat& inputImage, Histogram& histogram, arguments& args) {
+    cv::Mat outputImage;
+
+    cv::namedWindow( "Original", CV_WINDOW_AUTOSIZE );  // Create a window for display.
+    cv::imshow( "Original", inputImage );              // Show our image inside it.
+
+    if(args.method == thresholdingOption::otsu || args.method == thresholdingOption::all) {
+        thresholding::OtsuMethod otsu(inputImage, histogram);
+        otsu.run(outputImage);
+
+        cv::imwrite(args.outputPath + ".otsu.png", outputImage);
+
+        cv::namedWindow( otsu.getName(), CV_WINDOW_AUTOSIZE );  // Create a window for display.
+        cv::imshow( otsu.getName(), outputImage );              // Show our image inside it.
+    }
+    if(args.method == thresholdingOption::balanced || args.method == thresholdingOption::all) {
+        thresholding::BalancedHistogramMethod bht(inputImage, histogram);
+        bht.run(outputImage);
+
+        cv::imwrite(args.outputPath + ".bht.png", outputImage);
+
+        cv::namedWindow( bht.getName(), CV_WINDOW_AUTOSIZE );  // Create a window for display.
+        cv::imshow( bht.getName(), outputImage );              // Show our image inside it.
+    }
+    if(args.method == thresholdingOption::iterative || args.method == thresholdingOption::all) {
+        thresholding::IterativeMethod iterative(inputImage, histogram);
+        iterative.run(outputImage);
+
+        cv::imwrite(args.outputPath + ".iterative.png", outputImage);
+
+        cv::namedWindow( iterative.getName(), CV_WINDOW_AUTOSIZE );  // Create a window for display.
+        cv::imshow( iterative.getName(), outputImage );              // Show our image inside it.
+    }
+    if(args.method == thresholdingOption::manual) {
+        if(args.value < 0) {
+            throw std::invalid_argument("Bad manual threshold argument");
+        }
+
+        throw std::runtime_error("Manual thresholding not supported yet");
+    }
+
+    cv::waitKey(0);
+}
 
 int main(int argc, char const* argv[])
 {
@@ -97,6 +143,7 @@ int main(int argc, char const* argv[])
         Histogram histogram(inputImage);
         cout << histogram << endl;
 
+        performThresholding(inputImage, histogram, args);
     }
     catch (invalid_argument &e) {
         cerr << e.what() << endl;

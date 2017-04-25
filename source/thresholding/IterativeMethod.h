@@ -24,6 +24,13 @@ namespace thresholding {
         IterativeMethod(const cv::Mat& _image, const Histogram& _histogram);
 
         void run(cv::Mat& result) override;
+
+    protected:
+        /**
+         * Compute threshold with iterative method
+         * @return Value of threshold
+         */
+        int getIterativeThreshold();
     };
 
 }

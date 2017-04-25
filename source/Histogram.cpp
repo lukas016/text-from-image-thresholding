@@ -15,7 +15,6 @@ Histogram::Histogram(cv::Mat& image) : histogram(vector<uint32_t>(colorRange, 0)
     for (int64_t row = 0; row < image.rows; ++row)
         for (int64_t col = 0; col < image.cols; ++col)
             histogram[image.at<color>(row, col)]++;
-    // @TODO
 }
 
 color Histogram::getHighest()
@@ -48,7 +47,11 @@ color Histogram::getLowest()
 
 uint32_t Histogram::at(color index) const
 {
-    return histogram[index];
+    return histogram.at(index);
+}
+
+int Histogram::levels() const {
+    return colorRange;
 }
 
 ostream& operator<<(std::ostream& os, const Histogram& obj)
@@ -56,7 +59,7 @@ ostream& operator<<(std::ostream& os, const Histogram& obj)
     os << "HISTOGRAM:" << endl;
 
     for (uint16_t i = 0; i < colorRange; ++i)
-        os << i << ": " << obj.at(i) << endl;
+        os << i << ": " << std::to_string(obj.at(i)) << endl;
 
     return os;
 }

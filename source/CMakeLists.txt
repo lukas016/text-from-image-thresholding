@@ -22,6 +22,7 @@ set(SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
     main.cpp
     Histogram.cpp
+    thresholding/Algorithm.cpp
     thresholding/IterativeMethod.cpp
     thresholding/OtsuMethod.cpp
     thresholding/BalancedHistogramMethod.cpp

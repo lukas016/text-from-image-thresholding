@@ -22,6 +22,12 @@ namespace thresholding {
 
         void run(cv::Mat& result) override;
 
+    protected:
+        /**
+         * Compute threshold with Balanced Histogram Thresholding method
+         * @return Threshold
+         */
+        int getBHThreshold();
     };
 
 }
