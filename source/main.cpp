@@ -9,9 +9,12 @@
 #include "thresholding/OtsuMethod.h"
 #include "thresholding/BalancedHistogramMethod.h"
 #include "thresholding/IterativeMethod.h"
+#include "thresholding/AdaptiveGaussMethod.h"
+#include "thresholding/AdaptiveMeanCMethod.h"
 
 
 using namespace std;
+using namespace thresholding;
 
 struct arguments {
     string inputPath;
@@ -39,6 +42,8 @@ enum argsPosition {
 
 enum thresholdingOption {
     otsu = 0,
+    adaptiveGauss,
+    adaptiveMeanC,
     balanced,
     iterative,
     manual,
@@ -52,6 +57,8 @@ enum errorCode {
 
 map<string, int> thresholdingArgs({{"--otsu", thresholdingOption::otsu},
         {"--balanced", thresholdingOption::balanced},
+        {"--adaptiveGauss", thresholdingOption::adaptiveGauss},
+        {"--adaptiveMeanC", thresholdingOption::adaptiveMeanC},
         {"--iterative", thresholdingOption::iterative},
         {"--manual=", thresholdingOption::manual},
         {"--all", thresholdingOption::all}});
@@ -134,16 +141,38 @@ int main(int argc, char const* argv[])
 {
     int retCode = errorCode::noError;
     cv::Mat inputImage;
+    cv::Mat outputImage;
     arguments args;
-    // Print help if no arguments are given
+    Algorithm *algorithm;
 
+    // Print help if no arguments are given
     try {
         parseArguments(argc, argv, args);
         inputImage = cv::imread(args.inputPath, CV_LOAD_IMAGE_GRAYSCALE);
         Histogram histogram(inputImage);
-        cout << histogram << endl;
 
         performThresholding(inputImage, histogram, args);
+        // TODO: nevsimla jsem si metody all, tak asi predelat
+        switch (args.method) {
+            case thresholdingOption::adaptiveMeanC:
+                algorithm = new AdaptiveMeanCMethod(inputImage, histogram);
+                break;
+            case thresholdingOption::adaptiveGauss:
+                algorithm = new AdaptiveGaussMethod(inputImage, histogram);
+                break;
+            default:
+                algorithm = nullptr;
+        }
+
+        if (algorithm == nullptr) {
+            return 0;
+        }
+
+        // Run the algorithm
+        algorithm->run(outputImage);
+
+        // Write image to the output file
+        cv::imwrite(args.outputPath, outputImage);
     }
     catch (invalid_argument &e) {
         cerr << e.what() << endl;
