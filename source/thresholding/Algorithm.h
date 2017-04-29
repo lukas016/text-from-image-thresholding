@@ -20,7 +20,7 @@ namespace thresholding {
      */
     class Algorithm {
     public:
-        Algorithm(const cv::Mat& _image, const Histogram& _histogram) : image(_image), histogram(_histogram) {};
+        Algorithm(const cv::Mat& _image, const Histogram& _histogram, bool _halfThresholding = false) : image(_image), histogram(_histogram), halfThresholding(_halfThresholding) {};
         virtual ~Algorithm() {};
 
         /**
@@ -38,6 +38,7 @@ namespace thresholding {
     protected:
         const cv::Mat& image;
         const Histogram& histogram;
+        bool halfThresholding;
         std::string name;
 
         /**

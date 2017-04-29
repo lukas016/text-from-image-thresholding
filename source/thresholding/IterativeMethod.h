@@ -21,7 +21,7 @@ namespace thresholding {
          * @param _image Reference to source image
          * @param _histogram Reference to histogram of source image
          */
-        IterativeMethod(const cv::Mat& _image, const Histogram& _histogram);
+        IterativeMethod(const cv::Mat& _image, const Histogram& _histogram, bool _halfThresholding = false);
 
         void run(cv::Mat& result) override;
 

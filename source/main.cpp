@@ -22,6 +22,7 @@ struct arguments {
     string outputPath;
     int method;
     int value;
+    bool halfThresholding;
 
     arguments() : value(-1)
     {}
@@ -89,13 +90,18 @@ int getMethod(char const* argv[])
 
 void parseArguments(int argc, char const** argv, arguments & output)
 {
-    const int argsCount = 4;
-    if (argc != argsCount)
+    const int minArgs = 4;
+    const int maxArgs = 5;
+    if (argc < minArgs || argc > maxArgs)
         throw invalid_argument("Invalid count of arguments.\nExpected 4 arguments");
 
     output.method = getMethod(argv);
     output.inputPath = argv[argsPosition::inputImage];
     output.outputPath = argv[argsPosition::outputImage];
+
+    if (argc == maxArgs)
+        if (string("--half") == argv[4])
+            output.halfThresholding = true;
 }
 
 void performThresholding(cv::Mat& inputImage, Histogram& histogram, arguments& args) {
@@ -185,13 +191,13 @@ int main(int argc, char const* argv[])
 
             switch (args.method) {
                 case thresholdingOption::otsu:
-                    algorithm = make_unique<OtsuMethod>(inputImage, histogram);
+                    algorithm = make_unique<OtsuMethod>(inputImage, histogram, args.halfThresholding);
                     break;
                 case thresholdingOption::balanced:
-                    algorithm = make_unique<BalancedHistogramMethod>(inputImage, histogram);
+                    algorithm = make_unique<BalancedHistogramMethod>(inputImage, histogram, args.halfThresholding);
                     break;
                 case thresholdingOption::iterative:
-                    algorithm = make_unique<IterativeMethod>(inputImage, histogram);
+                    algorithm = make_unique<IterativeMethod>(inputImage, histogram, args.halfThresholding);
                     break;
                 case thresholdingOption::adaptiveMeanC:
                     algorithm = make_unique<AdaptiveMeanCMethod>(inputImage, histogram);

@@ -8,8 +8,8 @@
 
 namespace thresholding {
 
-    OtsuMethod::OtsuMethod(const cv::Mat& _image, const Histogram& _histogram) :
-        Algorithm(_image, _histogram) {
+    OtsuMethod::OtsuMethod(const cv::Mat& _image, const Histogram& _histogram, bool _halfThresholding) :
+        Algorithm(_image, _histogram, _halfThresholding) {
         name = "Otsu's Method";
     }
 
