@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 #include <stdexcept>
 #include <vector>
@@ -9,9 +10,12 @@
 #include "thresholding/OtsuMethod.h"
 #include "thresholding/BalancedHistogramMethod.h"
 #include "thresholding/IterativeMethod.h"
+#include "thresholding/AdaptiveGaussMethod.h"
+#include "thresholding/AdaptiveMeanCMethod.h"
 
 
 using namespace std;
+using namespace thresholding;
 
 struct arguments {
     string inputPath;
@@ -28,6 +32,10 @@ struct arguments {
                 "method:     " << method << endl <<
                 "value:      " << value << endl;
     }
+
+    string getOutput(const string &methodName = "") {
+        return outputPath + methodName + ".png";
+    }
 };
 
 enum argsPosition {
@@ -39,10 +47,12 @@ enum argsPosition {
 
 enum thresholdingOption {
     otsu = 0,
+    adaptiveGauss,
+    adaptiveMeanC,
     balanced,
     iterative,
     manual,
-    all,
+    all, //must be last
 };
 
 enum errorCode {
@@ -52,6 +62,8 @@ enum errorCode {
 
 map<string, int> thresholdingArgs({{"--otsu", thresholdingOption::otsu},
         {"--balanced", thresholdingOption::balanced},
+        {"--adaptiveGauss", thresholdingOption::adaptiveGauss},
+        {"--adaptiveMeanC", thresholdingOption::adaptiveMeanC},
         {"--iterative", thresholdingOption::iterative},
         {"--manual=", thresholdingOption::manual},
         {"--all", thresholdingOption::all}});
@@ -130,20 +142,83 @@ void performThresholding(cv::Mat& inputImage, Histogram& histogram, arguments& a
     cv::waitKey(0);
 }
 
+void saveImageWithTransparentBg(const string& outputFile, const cv::Mat &in) {
+    uint8_t white = 255;
+    cv::Mat outputMat;
+    cv::cvtColor(in, outputMat, CV_GRAY2BGRA);
+    for (int64_t x = 0; x < in.rows; ++x)
+        for (int64_t y = 0; y < in.cols; ++y) {
+            cv::Vec4b & pixel = outputMat.at<cv::Vec4b>(x,y);
+            if (pixel[0] == white && pixel[1] == white && pixel[2] == white)
+                pixel[3] = 0;
+        }
+
+    imwrite(outputFile, outputMat);
+}
+
 int main(int argc, char const* argv[])
 {
     int retCode = errorCode::noError;
     cv::Mat inputImage;
+    cv::Mat outputImage;
     arguments args;
+    unique_ptr<Algorithm> algorithm = nullptr;
+    bool allSet = false;
     // Print help if no arguments are given
-
     try {
         parseArguments(argc, argv, args);
         inputImage = cv::imread(args.inputPath, CV_LOAD_IMAGE_GRAYSCALE);
         Histogram histogram(inputImage);
-        cout << histogram << endl;
 
-        performThresholding(inputImage, histogram, args);
+        //performThresholding(inputImage, histogram, args);
+        // TODO: nevsimla jsem si metody all, tak asi predelat
+        if (args.method == all) {
+            allSet = true;
+            args.method = 0;
+        }
+
+        while (args.method < all) {
+            if (allSet && args.method == manual) {
+                args.method++;
+                continue;
+            }
+
+            switch (args.method) {
+                case thresholdingOption::otsu:
+                    algorithm = make_unique<OtsuMethod>(inputImage, histogram);
+                    break;
+                case thresholdingOption::balanced:
+                    algorithm = make_unique<BalancedHistogramMethod>(inputImage, histogram);
+                    break;
+                case thresholdingOption::iterative:
+                    algorithm = make_unique<IterativeMethod>(inputImage, histogram);
+                    break;
+                case thresholdingOption::adaptiveMeanC:
+                    algorithm = make_unique<AdaptiveMeanCMethod>(inputImage, histogram);
+                    break;
+                case thresholdingOption::adaptiveGauss:
+                    algorithm = make_unique<AdaptiveGaussMethod>(inputImage, histogram);
+                    break;
+                default:
+                    runtime_error("Invalid method option");
+                    break;
+            }
+
+            // Run the algorithm
+            algorithm->run(outputImage);
+
+            if (allSet) {
+                // Write image to the output file
+                saveImageWithTransparentBg(args.getOutput(algorithm->getName()), outputImage);
+                args.method++;
+            }
+            else {
+                saveImageWithTransparentBg(args.getOutput(), outputImage);
+                break;
+            }
+        }
+
+
     }
     catch (invalid_argument &e) {
         cerr << e.what() << endl;

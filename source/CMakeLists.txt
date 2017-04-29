@@ -26,6 +26,8 @@ set(SRCS
     thresholding/IterativeMethod.cpp
     thresholding/OtsuMethod.cpp
     thresholding/BalancedHistogramMethod.cpp
+    thresholding/AdaptiveMeanCMethod.cpp
+    thresholding/AdaptiveGaussMethod.cpp
 )
 
 find_package (Threads REQUIRED) # threading
