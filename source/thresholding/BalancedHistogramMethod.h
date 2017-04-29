@@ -18,7 +18,7 @@ namespace thresholding {
          * @param _image Reference to source image
          * @param _histogram Reference to histogram of source image
          */
-        BalancedHistogramMethod(const cv::Mat& _image, const Histogram& _histogram);
+        BalancedHistogramMethod(const cv::Mat& _image, const Histogram& _histogram, bool _halfThresholding = false);
 
         void run(cv::Mat& result) override;
 
