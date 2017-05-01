@@ -44,7 +44,7 @@ target_link_libraries (zpo ${CMAKE_THREAD_LIBS_INIT}) #threading
 target_link_libraries (zpo ${OpenCV_LIBS}) # opencv
 
 if(NOT MSVC)
-    target_compile_options(zpo PRIVATE -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic) # extra warnings
+    target_compile_options(zpo PRIVATE -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic -DDURATION) # extra warnings
 endif()
 set_property(TARGET zpo PROPERTY CXX_STANDARD 14) # we want C++14
 install(TARGETS zpo DESTINATION bin) #copy executable to bin folder on install
@@ -130,7 +130,7 @@ if(CPPCHECK_PATH)
             cppcheck
             COMMAND ${CPPCHECK_PATH}
             --enable=warning,performance,portability,information,missingInclude
-            --std=c++11
+            --std=c++14
             --template=gcc
             --verbose
             --quiet
