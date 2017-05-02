@@ -28,7 +28,7 @@ struct arguments {
     int value;
     bool halfThresholding;
 
-    arguments() : value(-1)
+    arguments() : value(-1), halfThresholding(false)
     {}
 
     void print() {
