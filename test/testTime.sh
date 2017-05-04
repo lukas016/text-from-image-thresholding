@@ -1,6 +1,6 @@
 #!/bin/bash
 
-METHODS=("--otsu" "--balanced" "--adaptiveGauss" "--iterative");
+METHODS=("--otsu" "--balanced" "--adaptiveGauss" "--adaptiveMeanC"  "--iterative");
 RESULT=0;
 mkdir -p result;
 p=0;
