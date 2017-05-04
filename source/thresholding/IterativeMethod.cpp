@@ -18,7 +18,7 @@ namespace thresholding {
         int newThreshold=0;
 
         while(true) {
-            float uF = 0, uB = 0;
+            double uF = 0, uB = 0;
             int countF = 0, countB = 0;
 
             // Compute mean foreground and mean background

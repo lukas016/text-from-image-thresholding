@@ -17,8 +17,8 @@ namespace thresholding {
         int lIndex = 0;   // min index
         int rIndex = 255; // max index
 
-        int lWeight = histogram.at(lIndex);
-        int rWeight = histogram.at(rIndex);
+        uint64_t lWeight = histogram.at(lIndex);
+        uint64_t rWeight = histogram.at(rIndex);
 
         while(lIndex < rIndex) {
             if(rWeight > lWeight) {
@@ -27,7 +27,7 @@ namespace thresholding {
                 lWeight += histogram.at(lIndex);
             }
             else {
-                // Left side is heavier -> push right index to left 
+                // Left side is heavier -> push right index to left
                 rIndex--;
                 rWeight += histogram.at(rIndex);
             }

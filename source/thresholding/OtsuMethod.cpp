@@ -15,14 +15,14 @@ namespace thresholding {
 
     int OtsuMethod::getOtsuThreshold() {
         int pixelsCount = image.rows * image.cols;
-        float uT = 0.0;
-        float w0 = 0;   /** < Weight background */
-        float w1;       /** < Weight foreground */
-        float u0 = 0;   /** < Mean background */
-        float u1 = 0;   /** < Mean foreground */
-        float sum0 = 0; /** < Sum background */
-        float sigma;
-        float max = 0;
+        double uT = 0.0;
+        double w0 = 0;   /** < Weight background */
+        double w1;       /** < Weight foreground */
+        double u0 = 0;   /** < Mean background */
+        double u1 = 0;   /** < Mean foreground */
+        double sum0 = 0; /** < Sum background */
+        double sigma;
+        double max = 0;
         int threshold = 0;
 
         for(int i=0; i < histogram.levels(); i++) {
