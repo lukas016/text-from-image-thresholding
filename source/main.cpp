@@ -9,7 +9,7 @@
     #include <chrono>
 #endif
 
-#include "version.h"
+//#include "version.h"
 #include "Histogram.h"
 #include "thresholding/OtsuMethod.h"
 #include "thresholding/BalancedHistogramMethod.h"
@@ -75,11 +75,11 @@ map<string, int> thresholdingArgs({{"--otsu", thresholdingOption::otsu},
 
 void printHelp()
 {
-    cout << "Help for cleanCppApplication " << endl;
-    cout << "Version: " << Version::getVersionLong() << endl;
-    cout << "Author:  " << endl;
-    cout << "URL:     " << endl;
-    /// @todo Do stuff in here also
+    cout << "Help for zpo:" << endl <<
+	    "Arguments: <method> <inputImage> <outputImage> [--half]" << endl <<
+	    "Methods:" << endl;
+    for (auto it : thresholdingArgs)
+        cout << "    " << it.first << endl;
 }
 
 int getMethod(char const* argv[])
