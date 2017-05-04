@@ -29,10 +29,10 @@ for dir in $(ls data); do
         inputFile=${inputDir}/${image}
         outputFile=${outputDir}/1/${filename}-
         mkdir -p ${outputDir}/1
-        ../build/zpo --all ${inputFile} ${outputFile} &>/dev/null
+        ../build/zpo --all ${inputFile} ${outputFile} --half &>/dev/null
 
         # Other iterations
-        for i in 2 3 4 5; do
+        for i in 2 3; do
             iterInputDir=${outputDir}/$(expr ${i} - 1)
             mkdir -p ${outputDir}/${i}
 
@@ -40,7 +40,7 @@ for dir in $(ls data); do
                 iterInputFile=${iterInputDir}/${iterImage}
                 iterOutputFile=${outputDir}/${i}/${iterImage%.*}-
 
-                ../build/zpo --all ${iterInputFile} ${iterOutputFile} &>/dev/null
+                ../build/zpo --all ${iterInputFile} ${iterOutputFile} --half &>/dev/null
             done;
         done;
     done;
