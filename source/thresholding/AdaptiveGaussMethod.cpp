@@ -10,7 +10,7 @@ namespace thresholding {
 
     AdaptiveGaussMethod::AdaptiveGaussMethod(const cv::Mat& _image, const Histogram& _histogram) :
             Algorithm(_image, _histogram) {
-        name = "Adaptive Gauss Method";
+        name = "AdaptiveGaussMethod";
     }
 
     void AdaptiveGaussMethod::run(cv::Mat& result) {

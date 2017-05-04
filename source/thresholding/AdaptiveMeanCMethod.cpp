@@ -10,7 +10,7 @@ namespace thresholding {
 
     AdaptiveMeanCMethod::AdaptiveMeanCMethod(const cv::Mat& _image, const Histogram& _histogram) :
             Algorithm(_image, _histogram) {
-        name = "Adaptive Mean C Method";
+        name = "AdaptiveMeanCMethod";
     }
 
     void AdaptiveMeanCMethod::run(cv::Mat& result) {

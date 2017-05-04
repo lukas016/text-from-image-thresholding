@@ -5,6 +5,10 @@
 #include <stdexcept>
 #include <vector>
 
+#ifdef DURATION
+    #include <chrono>
+#endif
+
 #include "version.h"
 #include "Histogram.h"
 #include "thresholding/OtsuMethod.h"
@@ -24,7 +28,7 @@ struct arguments {
     int value;
     bool halfThresholding;
 
-    arguments() : value(-1)
+    arguments() : value(-1), halfThresholding(false)
     {}
 
     void print() {
@@ -170,6 +174,9 @@ int main(int argc, char const* argv[])
     arguments args;
     unique_ptr<Algorithm> algorithm = nullptr;
     bool allSet = false;
+#ifdef DURATION
+    chrono::time_point<chrono::system_clock> start, end;
+#endif
     // Print help if no arguments are given
     try {
         parseArguments(argc, argv, args);
@@ -211,8 +218,16 @@ int main(int argc, char const* argv[])
             }
 
             // Run the algorithm
+#ifdef DURATION
+            start = chrono::system_clock::now();
+#endif
             algorithm->run(outputImage);
-
+#ifdef DURATION
+            end = chrono::system_clock::now();
+            chrono::duration<double> elapsedSeconds = end - start;
+            chrono::microseconds micro = chrono::duration_cast<chrono::microseconds>(elapsedSeconds);
+            cout << micro.count() << endl;
+#endif
             if (allSet) {
                 // Write image to the output file
                 saveImageWithTransparentBg(args.getOutput(algorithm->getName()), outputImage);
