@@ -10,7 +10,7 @@ namespace thresholding {
 
     BalancedHistogramMethod::BalancedHistogramMethod(const cv::Mat& _image, const Histogram& _histogram, bool _halfThresholding) :
         Algorithm(_image, _histogram, _halfThresholding) {
-        name = "Balanced Histogram Thresholding Method";
+        name = "BalancedHistogramThresholdingMethod";
     }
 
     int BalancedHistogramMethod::getBHThreshold() {
