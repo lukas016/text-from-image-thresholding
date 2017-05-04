@@ -23,18 +23,18 @@ public:
 
     color getHighest();
     color getLowest();
-    uint32_t at(color index) const;
-    
+    uint64_t at(color index) const;
+
     /**
      * Return number of intensity levels
-     * @return 
+     * @return
      */
     int levels() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Histogram& obj);
 
 protected:
-    std::vector<uint32_t> histogram;
+    std::vector<uint64_t> histogram;
 };
 
 #endif /* HISTOGRAM_H */
